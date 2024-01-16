@@ -6,10 +6,22 @@
 
 | Week | Progress |
 |------|----------|
-| 16/01/24 | Met with team |
+| 16/01/24 |  |
 
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
 
+| Week | Progress |
+|------|----------|
+| 16/01/24 |  |
+
 ### [Oran Farrell](mailto:ofarrell03@qub.ac.uk)
 
+| Week | Progress |
+|------|----------|
+| 16/01/24 |  |
+
 ### [Conrad Quinn](mailto:cquinn167@qub.ac.uk)
+
+| Week | Progress |
+|------|----------|
+| 16/01/24 |  |
