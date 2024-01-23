@@ -26,3 +26,4 @@
 | Image | Week | Progress |
 |-------|------|----------|
 | ![](img/conrad.jpg) | 16/01/24 | Met with team; |
+| | 23/01/24|  |
