@@ -6,7 +6,7 @@ void setup() {
 void loop() {
     analogWrite(M1A, 0);
     analogWrite(M1B, 0);
-    for (int i = 0; i < 256; i++;)
+    for (int i = 0; i < 256; i++)
     {
         analogWrite(M1A, i);
         delay(200);

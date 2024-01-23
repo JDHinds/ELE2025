@@ -3,13 +3,12 @@
 
 void setup() {
     analogWrite(M1B, 0);
-    int i = 0;
-    for (i < 256; i++;)
+    for (int i = 0; i < 256; i++)
     {
         analogWrite(M1A, i);
         delay(200);
     }
-    for (i > -1; i--;)
+    for (int i = 255; i > -1; i--)
     {
         analogWrite(M1A, i);
         delay(200);
