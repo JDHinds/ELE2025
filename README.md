@@ -27,4 +27,15 @@
 | Image | Week | Progress |
 |-------|------|----------|
 | ![](img/conrad.jpg) | 16/01/24 | Met with team; |
-| | 23/01/24|  |
+| | 23/01/24 | Worked on the proportional control algorithm code using Arduino. |
+
+# To-Do
+
+- [ ] Make shell for board
+- [ ] Get and integrate sensors
+
+- [ ] Write Arduino code for Line-Following
+- [ ] Write Arduino code for ball pushing
+- [ ] Write Ardiuno Code for HC-05 module
+- [ ] Write application to interface with HC-05
+  - [ ] Getting and displaying telemetrics
