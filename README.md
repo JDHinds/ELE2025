@@ -10,7 +10,6 @@
 | | 23/01/24 | Identification of errors from previous lab’s code and correction of wire placement from Arduino to Motor Driver Board to get motors operating correctly with PWM signals and button input.  Wiring of Encoder to Arduino and testing of code to check the serial monitor values increment with motor rotations. Carried out the Risk Assesment.|
 | | 30/01/24 | Wiring of Encoder on second motor to Arduino and testing of code to check the serial monitor values increment with motor rotations for both motors.  Connection of battery instead of power supply to allow for wireless movement.  Research of Infrared Line Tracking Sensor to determine the wiring and potential code to be used.|
 
-
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
 
 | Image | Week | Progress |
