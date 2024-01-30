@@ -14,7 +14,7 @@
 | Image | Week | Progress |
 |-------|------|----------|
 | ![](img/jude.jpg) | 16/01/24 | Met with team; chosen as team leader; appointed as Programming Lead, and wrote the code for the tasks in the first lab. Was unable to verify code due to technical issues. |
-| | 23/01/24 |  |
+| | 23/01/24 | Fixed code from last week's lab; wrote RotationUsingEncoder code.|
 
 ### [Oran Farrell](mailto:ofarrell03@qub.ac.uk)
 
