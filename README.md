@@ -22,6 +22,8 @@
 | Image | Week | Progress |
 |-------|------|----------|
 | ![](img/oran.jpg) | 16/01/24 | Met with team; |
+| | 30/01/24 | Began the design of the robot. Decided on a two tier, two wheel system with a stabliser wheel at the back. Have a basic schematic drawn out on paper, need to move this onto Fusion 360. | 
+| | 5/02/24  | Completed a basic design mock-up on fusion 360. 2 basic panels, 150mm, 100mm, 5mm. Each panel has 4 holes located in corners 10mm in diameter. the bottom panel additional has a hole at the back, (30mm in diameter) which is for the stablising wheel. the pilers are 60mm tall and 10mm in diameter. |
 
 ### [Conrad Quinn](mailto:cquinn167@qub.ac.uk)
 
