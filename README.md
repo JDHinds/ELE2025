@@ -20,6 +20,11 @@
 |-------|------|----------|
 | ![](img/jude.jpg) | 16/01/24 | Met with team; chosen as team leader; appointed as Programming Lead, and wrote the code for the tasks in the first lab. Was unable to verify code due to technical issues. |
 | | 23/01/24 | Fixed code from last week's lab; wrote RotationUsingEncoder code. Carried out the Risk Assesment. |
+| | 30/01/24 | Worked on Sensors Lab |
+| | 06/02/24 | Reserched and Assembeled HC-05 Module. Discovered Flutter SerialPort library. |
+| | 13/02/24 | Reading Week - was occupied with other assignments |
+| | 20/02/24 | Made JSON Serialisable class for reading data in and out of the serial monitor. Serial monitor cannot yet be read accurately. |
+| | 27/02/24 | Flutter program now accurately read serial monitor. |
 
 ### [Oran Farrell](mailto:ofarrell03@qub.ac.uk)
 
