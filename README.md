@@ -11,8 +11,10 @@
 | | 30/01/24 | Wiring of Encoder on second motor to Arduino and testing of code to check the serial monitor values increment with motor rotations for both motors.  Connection of battery instead of power supply to allow for wireless movement.  Research of Infrared Line Tracking Sensor to determine the wiring and potential code to be used.|
 | | 06/02/24 | Wiring and coding of Infrared Line Tracking Sensor to detect a difference between white and black on a page.  Glued wheels and fitted stabilising wheel from old chassis onto new chassis.|
 | | 13/02/24 | Reading Week.|
-| | 20/02/24 | Building of new chassis and fitting of components.  IR Sensors working, and trial code uploaded to test on track.  Changed sensors to back and reversed motor direction in code to allow for more sharp cornering.  Robot now completes the cornering section of the course.|
+| | 20/02/24 | Building of new chassis and fitting of components.  IR Sensors working, and trial code uploaded to test on track.  Changed sensors to back and reversed motor direction in code to allow for more sharp cornering.|
+| | 22/02/24 | Robot now completes the cornering section of the course.|
 | | 27/02/24 | Adjustment of motor speeds to complete course faster.  Wiring and coding of encoder to allow motor speed to be monitored.|
+| | 29/02/24 | IR Sensors fitted with screws and 2 additional sensors added.  Interrupt code added to enable outside sensors to enable the last used code to run when the line is overshot, allowing faster speeds to be achieved within course.|
 
 
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
