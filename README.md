@@ -28,6 +28,7 @@
 | | 13/02/24 | Reading Week - was occupied with other assignments |
 | | 20/02/24 | Made JSON Serialisable class for reading data in and out of the serial monitor. Serial monitor cannot yet be read accurately. |
 | | 27/02/24 | Flutter program now accurately read serial monitor. |
+| | 05/03/24 | Program can now read and write states to the board. Now working on finalising line following algorithm w/ David. |
 
 ### [Oran Farrell](mailto:ofarrell03@qub.ac.uk)
 

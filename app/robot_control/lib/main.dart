@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_libserialport/flutter_libserialport.dart'; //https://www.youtube.com/watch?v=4WiH9pf2ULQ
+import 'package:flutter/services.dart';
+import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'package:robot_control/telemetry.dart'; //https://www.youtube.com/watch?v=4WiH9pf2ULQ
 
 void main() {
   runApp(const MyApp());
@@ -14,9 +17,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'robot_control',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+          useMaterial3: true,
+          colorScheme: const ColorScheme.dark(
+            primary: Color.fromARGB(255, 54, 117, 136),
+            secondary: Color.fromARGB(255, 47, 79, 79),
+            background: Color.fromARGB(255, 70, 70, 70),
+          )),
       home: const MyHomePage(),
     );
   }
@@ -32,23 +38,22 @@ class _MyHomePageState extends State<MyHomePage> {
   SerialPort port = SerialPort(SerialPort.availablePorts[0]);
   late SerialPortReader reader;
 
-  List<int> data = [];
+  TelemetryData currentState = TelemetryData();
+  String data = "";
+
+  bool AutoMode = false;
 
   @override
   void initState() {
     super.initState();
 
-    print(SerialPort.availablePorts);
+    var res = port.openReadWrite();
 
     port.config = SerialPortConfig()
       ..baudRate = 2000000
       ..bits = 8
       ..parity = 0
       ..stopBits = 1;
-
-    //port.config.setFlowControl(2);
-
-    var res = port.openReadWrite();
 
     if (!res) {
       print('Error opening port:${port.name}');
@@ -59,20 +64,121 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: StreamBuilder<Uint8List>(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: (node, event) {
+        if (!AutoMode) {
+          if (event.logicalKey == LogicalKeyboardKey.keyW &&
+              (event is KeyDownEvent || event is KeyRepeatEvent)) {
+            currentState.leftWheelSpeed = 255;
+            currentState.rightWheelSpeed = 255;
+          } else if (event.logicalKey == LogicalKeyboardKey.keyA &&
+              (event is KeyDownEvent || event is KeyRepeatEvent)) {
+            currentState.leftWheelSpeed = -255;
+            currentState.rightWheelSpeed = 255;
+          } else if (event.logicalKey == LogicalKeyboardKey.keyD &&
+              (event is KeyDownEvent || event is KeyRepeatEvent)) {
+            currentState.leftWheelSpeed = 255;
+            currentState.rightWheelSpeed = -255;
+          } else if (event.logicalKey == LogicalKeyboardKey.keyS &&
+              (event is KeyDownEvent || event is KeyRepeatEvent)) {
+            currentState.leftWheelSpeed = -255;
+            currentState.rightWheelSpeed = -255;
+          } else if (event is KeyUpEvent) {
+            currentState.leftWheelSpeed = 0;
+            currentState.rightWheelSpeed = 0;
+          }
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: StreamBuilder<Uint8List>(
         stream: reader.stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            currentState = TelemetryData();
+
             return Text('Error: ${snapshot.error}');
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text('Awaiting result...');
+            port.write(Uint8List.fromList("{echo}\n".codeUnits));
+            return Scaffold(
+              body: Text('Awaiting result...'),
+              floatingActionButton: Row(
+                children: [
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.precision_manufacturing),
+                    onPressed: () {
+                      AutoMode = true;
+                      port.write(Uint8List.fromList("{auto}\n".codeUnits));
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.control_camera),
+                    onPressed: () {
+                      AutoMode = false;
+                      port.write(Uint8List.fromList("{manual}\n".codeUnits));
+                    },
+                  ),
+                ],
+              ),
+            );
           }
 
-          var decodedString = String.fromCharCodes(snapshot.data!);
+          if (AutoMode) {
+            var decodedString = String.fromCharCodes(snapshot.data!);
+            try {
+              if (decodedString[0] == '{') {
+                data = decodedString;
+              } else if (decodedString[decodedString.length - 3] == '}') {
+                data += decodedString;
+                currentState = TelemetryData.fromJson(
+                    json.decode(data.toString().substring(0, data.length - 2)));
+                print(data);
+              } else {
+                data += decodedString;
+              }
+            } catch (ex) {
+              print(ex);
+              currentState.connected = false;
+            }
+          } else {
+            print("Manual");
+            port.write(Uint8List.fromList(
+                (TelemetryData.toJson(currentState).toString() + "\n")
+                    .codeUnits));
+          }
 
-          return Text(decodedString);
+          return Scaffold(
+            body: Row(
+              children: [
+                SafeArea(child: portInfo(port)),
+                Expanded(
+                  child: telemetryDisplay(currentState),
+                ),
+              ],
+            ),
+            floatingActionButton: Row(
+              children: [
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.precision_manufacturing),
+                  onPressed: () {
+                    AutoMode = true;
+                    port.write(Uint8List.fromList("{auto}\n".codeUnits));
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.control_camera),
+                  onPressed: () {
+                    AutoMode = false;
+                    port.write(Uint8List.fromList("{manual}\n".codeUnits));
+                  },
+                ),
+              ],
+            ),
+          );
         },
       ),
     );
@@ -82,6 +188,103 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     port.close();
     super.dispose();
+  }
+
+  Widget telemetryDisplay(TelemetryData state) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Spacer(),
+            Text(
+              "Distance travelled: " + state.distanceTravelled.toString() + "m",
+              //style:
+              //  DefaultTextStyle.of(context).style.apply(fontSizeFactor: 3.0),
+            ),
+            Spacer(),
+          ],
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  Icon(Icons.incomplete_circle, size: 200),
+                  Slider(
+                      value: state.leftWheelSpeed.toDouble(),
+                      min: -255,
+                      max: 255,
+                      inactiveColor: Colors.white,
+                      onChanged: ((double i) {})),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Text("Left Wheel Speed: " +
+                          currentState.leftWheelSpeed.toString()),
+                      const Spacer(),
+                      const Text("Left Sensor: "),
+                      Container(
+                        color: state.isLeftSensorDark
+                            ? Colors.black
+                            : Colors.white,
+                        width: 50,
+                        height: 50,
+                      ),
+                      const Spacer()
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Icon(Icons.incomplete_circle, size: 200),
+                  Slider(
+                      value: state.rightWheelSpeed.toDouble(),
+                      min: -255,
+                      max: 255,
+                      inactiveColor: Colors.white,
+                      onChanged: ((double i) {})),
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Text("Right Wheel Speed: " +
+                          currentState.rightWheelSpeed.toString()),
+                      const Spacer(),
+                      const Text("Right Sensor: "),
+                      Container(
+                        color: state.isRightSensorDark
+                            ? Colors.black
+                            : Colors.white,
+                        width: 50,
+                        height: 50,
+                      ),
+                      const Spacer()
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget portInfo(SerialPort port) {
+    return Drawer(
+      child: ListView(
+        children: [
+          ListTile(
+            title: Text(port.description!),
+          ),
+          ListTile(
+            title: Text(port.transport.toString()),
+          )
+        ],
+      ),
+    );
   }
 }
 

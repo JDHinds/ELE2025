@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class TelemetryData {
   bool connected;
   int leftWheelSpeed;
@@ -19,7 +17,7 @@ class TelemetryData {
   TelemetryData.fromJson(Map<String, dynamic> json)
       : connected = json['connected'] as bool? ?? false,
         leftWheelSpeed = json['leftWheelSpeed'] as int? ?? 0,
-        rightWheelSpeed = json['leftWheelSpeed'] as int? ?? 0,
+        rightWheelSpeed = json['rightWheelSpeed'] as int? ?? 0,
         isLeftSensorDark = json['isLeftSensorDark'] as bool? ?? false,
         isRightSensorDark = json['isRightSensorDark'] as bool? ?? false,
         distanceTravelled = json['distanceTravelled'] as int? ?? 0;
