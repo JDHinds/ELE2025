@@ -5,10 +5,10 @@
 #define M2A 4 //M1A is connected to Arduino pin 4
 #define M2B 5 //M1B is connected to Arduio pin 5
 
-#define IN_D01 6
-#define IN_D02 7
-#define IN_RIGHT 2
-#define IN_LEFT 3
+#define rightSesnor1 6
+#define leftSesnor1 7
+#define rightSesnor2 2
+#define leftSesnor2 3
 
 #define APin1 18
 #define BPin1 19
@@ -20,7 +20,12 @@ volatile unsigned long BCount1 = 0;
 volatile unsigned long ACount2 = 0;
 volatile unsigned long BCount2 = 0;
 
+int mode = 0;
+
 //attachInterrupt(digitalPinToInterrupt(APin1), ATick, RISING);
+
+bool tr = false;
+bool tl = false;
 
 bool ok = true;
 
@@ -44,8 +49,8 @@ void setup()
 {
   Serial.begin(2000000);
   Serial.setTimeout(1000);
-  attachInterrupt(digitalPinToInterrupt(IN_RIGHT), tright, HIGH);
-  attachInterrupt(digitalPinToInterrupt(IN_LEFT), tleft, HIGH);
+  attachInterrupt(digitalPinToInterrupt(rightSesnor2), tright, RISING);
+  attachInterrupt(digitalPinToInterrupt(leftSesnor2), tleft, RISING);
   pinMode (M1A, OUTPUT);
   pinMode (M1B, OUTPUT);
   
@@ -65,9 +70,20 @@ void setup()
 
 void loop() 
 {  
+  if(mode == 1)
+  {
+    lineFollowing();
+    sendTelemetry();
+  }
 
-  lineFollowing();
-
+  else if(mode == 2)
+  {
+    ballPushing();
+  }    
+  else
+  {
+    recieveInstructions();
+  }
   /*
   while(Auto)
   {
@@ -76,7 +92,7 @@ void loop()
   }
   while(!Auto)
   {
-    recieveInstructions();
+    
   }
   */
     
@@ -85,52 +101,75 @@ void loop()
 
 void lineFollowing()
 {
-    bool value_D01 = digitalRead(IN_D01);
-    bool value_D02 = digitalRead(IN_D02);    
-    
-    if(value_D01 == LOW && value_D02 == HIGH)
-    {
-    //Left Black and Right White
-      
-      analogWrite(M1A, 0);
-      analogWrite(M1B, 60);
+    bool leftSensor1Value = digitalRead(leftSesnor1);
+    bool rightSensor1Value = digitalRead(rightSesnor1); 
+
+
+   if(leftSensor1Value == HIGH && rightSensor1Value == HIGH)
+   {    
+     mode = 2;  
+     ACount1 = 0;
+   }    
   
-      analogWrite(M2A, 20);
-      analogWrite(M2B, 0);
+    if(leftSensor1Value)
+    {
+      tl=false;
+    }
+    if(rightSensor1Value)
+    {
+      tr=false;
     }
   
-    else if(value_D01 == HIGH && value_D02 == LOW)
+    if((leftSensor1Value == LOW  && rightSensor1Value == LOW) && (tr == false && tl == false))
     {
-    //Left White and Right Black
-
-     analogWrite(M1A, 20);
-     analogWrite(M1B, 0);
-
-     analogWrite(M2A, 0);
-     analogWrite(M2B, 60);
-   }
-
-   else
-   {
-   //Both White
+      int motor1Speed = 190;
+      int motor2Speed = 190;
+      
+      //Both White
   
-     analogWrite(M1A, 0);
-     analogWrite(M1B, 100);
+      analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
+      analogWrite(M1B, motor1Speed); //Set M1B to 0
   
-     analogWrite(M2A, 0);
-     analogWrite(M2B, 100);
-   }
+      analogWrite(M2A, 0); //Set M2A to ~10% PWM signal
+      analogWrite(M2B, motor2Speed); //Set M2B to 0
+    }
+  
+    else if((leftSensor1Value == LOW && rightSensor1Value == HIGH)||(tl == true))
+    {
+      int motor1Speed = 80;
+      int motor2Speed = 40;
+      
+      //Left Black and Right White
+      
+      analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
+      analogWrite(M1B, motor1Speed); //Set M1B to 0
+  
+      analogWrite(M2A, motor2Speed); //Set M2A to ~10% PWM signal
+      analogWrite(M2B, 0); //Set M1B to 0
+    }
+  
+    else if((leftSensor1Value == HIGH && rightSensor1Value == LOW)||(tr == true))
+    {
+      int motor1Speed = 40;
+      int motor2Speed = 80;
+    
+      //Left White and Right Black
+
+     analogWrite(M1A, motor1Speed); //Set M1A to ~10% PWM signal
+     analogWrite(M1B, 0); //Set M1B to 0
+
+     analogWrite(M2A, 0); //Set M2A to ~10% PWM signal
+     analogWrite(M2B, motor2Speed); //Set M2B to 0
+   }  
 }
 
 void ballPushing()
 {
-
-  Serial.println(ACount1);
     
-  if(ACount1 < 1500)
+  if(ACount1 < 1600)
   {
-      int motor1Speed = 150;
-      int motor2Speed = 150;
+      int motor1Speed = 60;
+      int motor2Speed = 60;
   
       analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
       analogWrite(M1B, motor1Speed); //Set M1B to 0
@@ -141,8 +180,8 @@ void ballPushing()
 
   else if(ACount1 < 3000)
   {
-      int motor1Speed = 150;
-      int motor2Speed = 150;
+      int motor1Speed = 50;
+      int motor2Speed = 50;
   
       analogWrite(M1A, motor1Speed); //Set M1A to ~10% PWM signal
       analogWrite(M1B, 0); //Set M1B to 0
@@ -212,43 +251,26 @@ void recieveInstructions()
   else
   {
     deserialiseData(instructions);
+
+    analogWrite(M1A, abs(constrain(data.rightWheelSpeed, -255, 0)));
+    analogWrite(M1B, abs(constrain(data.leftWheelSpeed, 0, 255)));
+  
+    analogWrite(M2A, abs(constrain(data.leftWheelSpeed, -255, 0)));
+    analogWrite(M2B, abs(constrain(data.leftWheelSpeed, 0, 255)));
   }
 }
 
 void tleft()
 {
-  analogWrite(M1A, 0);
-  analogWrite(M1B, 60);
-  
-  analogWrite(M2A, 60);
-  analogWrite(M2B, 0);
-  /*while(digitalRead(IN_LEFT) || digitalRead(IN_D02))
-  {
+  tl = true;
+  tr = false;
     
-  }
-  analogWrite(M1A, 0);
-  analogWrite(M1B, 100);
-  
-  analogWrite(M2A, 0);
-  analogWrite(M2B, 100);*/
 }
 
 void tright()
 {  
-  analogWrite(M1A, 60);
-  analogWrite(M1B, 0);
-  
-  analogWrite(M2A, 0);
-  analogWrite(M2B, 60);
-  /*while(digitalRead(IN_RIGHT) || digitalRead(IN_D01))
-  {
-    
-  }
-  analogWrite(M1A, 0);
-  analogWrite(M1B, 100);
-  
-  analogWrite(M2A, 0);
-  analogWrite(M2B, 100);*/
+    tr = true;
+    tl = false;
 }
 
 void ATick1()
