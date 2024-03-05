@@ -3,10 +3,10 @@
 #define M2A 4 //M1A is connected to Arduino pin 4
 #define M2B 5 //M1B is connected to Arduio pin 5
 
-#define IN_D01 6
-#define IN_D02 7
-#define IN_RIGHT 2
-#define IN_LEFT 3
+#define rightSesnor1 6
+#define leftSesnor1 7
+#define rightSesnor2 2
+#define leftSesnor2 3
 
 #define APin1 18
 #define BPin1 19
@@ -18,6 +18,8 @@ volatile unsigned long BCount1 = 0;
 volatile unsigned long ACount2 = 0;
 volatile unsigned long BCount2 = 0;
 
+int mode = 1;
+
 //attachInterrupt(digitalPinToInterrupt(APin1), ATick, RISING);
 
 bool tr = false;
@@ -28,8 +30,8 @@ bool ok = true;
 void setup() 
 {
   Serial.begin(9600);
-  attachInterrupt(digitalPinToInterrupt(IN_RIGHT), tright, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(IN_LEFT), tleft, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(rightSesnor2), tright, RISING);
+  attachInterrupt(digitalPinToInterrupt(leftSesnor2), tleft, RISING);
   pinMode (M1A, OUTPUT);
   pinMode (M1B, OUTPUT);
   
@@ -50,28 +52,39 @@ void setup()
 void loop() 
 {  
 
-  lineFollowing();
+  if(mode == 1)
+  {
+    lineFollowing();
+  }
 
-  //ballPushing();
-    
+  else if(mode == 2)
+  {
+    ballPushing();
+  }    
 }
 
 
 void lineFollowing()
 {
-    bool value_D01 = digitalRead(IN_D01);
-    bool value_D02 = digitalRead(IN_D02);    
-  
-    if(value_D01)
-    {
-      tr=false;
-    }
-    if(value_D02)
+    bool leftSensor1Value = digitalRead(leftSesnor1);
+    bool rightSensor1Value = digitalRead(rightSesnor1); 
+
+/*
+   if(leftSensor1Value == HIGH && rightSensor1Value == HIGH)
+   {    
+     mode = 2;  
+   }    
+  */
+    if(leftSensor1Value)
     {
       tl=false;
     }
+    if(rightSensor1Value)
+    {
+      tr=false;
+    }
   
-    if((value_D01 == LOW  && value_D02 == LOW)&& (tr == false && tl == false))
+    if((leftSensor1Value == LOW  && rightSensor1Value == LOW) && (tr == false && tl == false))
     {
       int motor1Speed = 150;
       int motor2Speed = 150;
@@ -85,7 +98,7 @@ void lineFollowing()
       analogWrite(M2B, motor2Speed); //Set M2B to 0
     }
   
-    else if((value_D01 == LOW && value_D02 == HIGH)||(tl == true))
+    else if((leftSensor1Value == LOW && rightSensor1Value == HIGH)||(tl == true))
     {
       int motor1Speed = 60;
       int motor2Speed = 20;
@@ -99,7 +112,7 @@ void lineFollowing()
       analogWrite(M2B, 0); //Set M1B to 0
     }
   
-    else if((value_D01 == HIGH && value_D02 == LOW)||(tr == true))
+    else if((leftSensor1Value == HIGH && rightSensor1Value == LOW)||(tr == true))
     {
       int motor1Speed = 20;
       int motor2Speed = 60;
@@ -113,10 +126,7 @@ void lineFollowing()
      analogWrite(M2B, motor2Speed); //Set M2B to 0
    }
 
-   else if(!value_D01 && !value_D02)
-   {    
-     //Both Black  
-   }    
+  
 }
 
 void ballPushing()
@@ -160,14 +170,15 @@ void ballPushing()
 
 void tleft()
 {
-    tl=true;
-    tr=false;  
+  tl = true;
+  tr = false;
+    
 }
 
 void tright()
 {  
-    tr=true;  
-    tl=false;  
+    tr = true;
+    tl = false;
 }
 
 void ATick1()
