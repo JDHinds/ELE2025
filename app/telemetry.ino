@@ -22,15 +22,12 @@ volatile unsigned long BCount2 = 0;
 
 int mode = 0;
 
-//attachInterrupt(digitalPinToInterrupt(APin1), ATick, RISING);
-
 bool tr = false;
 bool tl = false;
 
 bool ok = true;
 
 char JsonOutput[192];
-bool Auto;
 
 class TelemetryData
 {
@@ -47,7 +44,7 @@ TelemetryData data;
 
 void setup() 
 {
-  Serial.begin(2000000);
+  Serial.begin(115200);
   Serial.setTimeout(1000);
   attachInterrupt(digitalPinToInterrupt(rightSesnor2), tright, RISING);
   attachInterrupt(digitalPinToInterrupt(leftSesnor2), tleft, RISING);
@@ -74,28 +71,19 @@ void loop()
   {
     lineFollowing();
     sendTelemetry();
+    delay(50);
   }
 
   else if(mode == 2)
   {
     ballPushing();
+    sendTelemetry();
+    delay(50);
   }    
   else
   {
     recieveInstructions();
-  }
-  /*
-  while(Auto)
-  {
-    sendTelemetry();
-    delay (300);
-  }
-  while(!Auto)
-  {
-    
-  }
-  */
-    
+  } 
 }
 
 
@@ -122,8 +110,37 @@ void lineFollowing()
   
     if((leftSensor1Value == LOW  && rightSensor1Value == LOW) && (tr == false && tl == false))
     {
-      int motor1Speed = 190;
-      int motor2Speed = 190;
+
+      int motor1Speed = 0;
+      int motor2Speed = 0;
+      
+      if(ACount1 < 13800)
+      {
+         motor1Speed = 220;
+         motor2Speed = 220;
+         
+         data.connected = true;
+         data.leftWheelSpeed = 220;
+         data.rightWheelSpeed = 220;
+         data.isLeftSensorDark = false;
+         data.isRightSensorDark = false;
+         data.distanceTravelled = ACount2;
+      }
+
+      else
+      {
+         motor1Speed = 90;
+         motor2Speed = 90;
+
+         data.connected = true;
+         data.leftWheelSpeed = 90;
+         data.rightWheelSpeed = 90;
+         data.isLeftSensorDark = false;
+         data.isRightSensorDark = false;
+         data.distanceTravelled = ACount2;
+      }
+      
+      
       
       //Both White
   
@@ -136,67 +153,102 @@ void lineFollowing()
   
     else if((leftSensor1Value == LOW && rightSensor1Value == HIGH)||(tl == true))
     {
-      int motor1Speed = 80;
-      int motor2Speed = 40;
+      int motor1Speed = 70;
+      int motor2Speed = 60;
       
       //Left Black and Right White
       
-      analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
-      analogWrite(M1B, motor1Speed); //Set M1B to 0
+      analogWrite(M1A, 0);
+      analogWrite(M1B, motor1Speed);
   
-      analogWrite(M2A, motor2Speed); //Set M2A to ~10% PWM signal
-      analogWrite(M2B, 0); //Set M1B to 0
+      analogWrite(M2A, motor2Speed);
+      analogWrite(M2B, 0);
+
+      data.connected = true;
+      data.leftWheelSpeed = -70;
+      data.rightWheelSpeed = 60;
+      data.isLeftSensorDark = true;
+      data.isRightSensorDark = false;
+      data.distanceTravelled = ACount2;
     }
   
     else if((leftSensor1Value == HIGH && rightSensor1Value == LOW)||(tr == true))
     {
-      int motor1Speed = 40;
-      int motor2Speed = 80;
+      int motor1Speed = 60;
+      int motor2Speed = 70;
     
       //Left White and Right Black
 
-     analogWrite(M1A, motor1Speed); //Set M1A to ~10% PWM signal
-     analogWrite(M1B, 0); //Set M1B to 0
+     analogWrite(M1A, motor1Speed);
+     analogWrite(M1B, 0);
 
-     analogWrite(M2A, 0); //Set M2A to ~10% PWM signal
-     analogWrite(M2B, motor2Speed); //Set M2B to 0
+     analogWrite(M2A, 0);
+     analogWrite(M2B, motor2Speed);
+
+      data.connected = true;
+      data.leftWheelSpeed = 60;
+      data.rightWheelSpeed = -70;
+      data.isLeftSensorDark = false;
+      data.isRightSensorDark = true;
+      data.distanceTravelled = ACount2;
    }  
 }
 
 void ballPushing()
 {
     
-  if(ACount1 < 1600)
+  if(ACount1 < 1700)
   {
-      int motor1Speed = 60;
-      int motor2Speed = 60;
+      int motor1Speed = 70;
+      int motor2Speed = 70;
   
-      analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
-      analogWrite(M1B, motor1Speed); //Set M1B to 0
+      analogWrite(M1A, 0);
+      analogWrite(M1B, motor1Speed);
   
-      analogWrite(M2A, 0); //Set M2A to ~10% PWM signal
-      analogWrite(M2B, motor2Speed); //Set M2B to 0        
+      analogWrite(M2A, 0);
+      analogWrite(M2B, motor2Speed);
+
+      data.connected = true;
+      data.leftWheelSpeed = 70;
+      data.rightWheelSpeed = 70;
+      data.isLeftSensorDark = false;
+      data.isRightSensorDark = false;
+      data.distanceTravelled = ACount2;
   }
 
   else if(ACount1 < 3000)
   {
-      int motor1Speed = 50;
-      int motor2Speed = 50;
+      int motor1Speed = 100;
+      int motor2Speed = 100;
   
-      analogWrite(M1A, motor1Speed); //Set M1A to ~10% PWM signal
-      analogWrite(M1B, 0); //Set M1B to 0
+      analogWrite(M1A, motor1Speed);
+      analogWrite(M1B, 0);
   
-      analogWrite(M2A, motor2Speed); //Set M2A to ~10% PWM signal
-      analogWrite(M2B, 0); //Set M2B to 0
+      analogWrite(M2A, motor2Speed);
+      analogWrite(M2B, 0);
+      
+      data.connected = true;
+      data.leftWheelSpeed = 100;
+      data.rightWheelSpeed = 100;
+      data.isLeftSensorDark = false;
+      data.isRightSensorDark = false;
+      data.distanceTravelled = ACount2;
   }
 
   else
   {
-      analogWrite(M1A, 0); //Set M1A to ~10% PWM signal
-      analogWrite(M1B, 0); //Set M1B to 0
+      analogWrite(M1A, 0);
+      analogWrite(M1B, 0);
   
-      analogWrite(M2A, 0); //Set M2A to ~10% PWM signal
-      analogWrite(M2B, 0); //Set M2B to 0
+      analogWrite(M2A, 0);
+      analogWrite(M2B, 0);
+
+      data.connected = true;
+      data.leftWheelSpeed = 0;
+      data.rightWheelSpeed = 0;
+      data.isLeftSensorDark = false;
+      data.isRightSensorDark = false;
+      data.distanceTravelled = ACount2;
   }
 }
 
@@ -231,9 +283,9 @@ void sendTelemetry()
   serialiseData(data);
   String output = String(JsonOutput);
   Serial.print(output.substring(0,64));
-  delay(50);
+  delay(25);
   Serial.print(output.substring(64,128));
-  delay(50);
+  delay(25);
   Serial.println(output.substring(128,192));
 }
 
@@ -241,19 +293,17 @@ void recieveInstructions()
 {
   Serial.println("{manual}");
   String instructions;
-  //while (instructions == NULL)
-  //{  }
   instructions = Serial.readStringUntil('\n');
   if (instructions == "{manual}")
   { }
   else if (instructions == "{auto}")
-  { Auto = true; }
+  { mode = 1; }
   else
   {
     deserialiseData(instructions);
 
     analogWrite(M1A, abs(constrain(data.rightWheelSpeed, -255, 0)));
-    analogWrite(M1B, abs(constrain(data.leftWheelSpeed, 0, 255)));
+    analogWrite(M1B, abs(constrain(data.rightWheelSpeed, 0, 255)));
   
     analogWrite(M2A, abs(constrain(data.leftWheelSpeed, -255, 0)));
     analogWrite(M2B, abs(constrain(data.leftWheelSpeed, 0, 255)));

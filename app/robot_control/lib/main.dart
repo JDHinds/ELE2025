@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SerialPort port = SerialPort(SerialPort.availablePorts[0]);
+  SerialPort port = SerialPort(SerialPort.availablePorts[1]);
   late SerialPortReader reader;
 
   TelemetryData currentState = TelemetryData();
@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
     var res = port.openReadWrite();
 
     port.config = SerialPortConfig()
-      ..baudRate = 2000000
+      ..baudRate = 115200
       ..bits = 8
       ..parity = 0
       ..stopBits = 1;
@@ -129,13 +129,13 @@ class _MyHomePageState extends State<MyHomePage> {
           if (AutoMode) {
             var decodedString = String.fromCharCodes(snapshot.data!);
             try {
-              if (decodedString[0] == '{') {
-                data = decodedString;
-              } else if (decodedString[decodedString.length - 3] == '}') {
+              if (decodedString[decodedString.length - 3] == '}') {
                 data += decodedString;
                 currentState = TelemetryData.fromJson(
                     json.decode(data.toString().substring(0, data.length - 2)));
                 print(data);
+              } else if (decodedString[0] == '{') {
+                data = decodedString;
               } else {
                 data += decodedString;
               }
@@ -144,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
               currentState.connected = false;
             }
           } else {
-            print("Manual");
+            print(String.fromCharCodes(snapshot.data!));
             port.write(Uint8List.fromList(
                 (TelemetryData.toJson(currentState).toString() + "\n")
                     .codeUnits));
