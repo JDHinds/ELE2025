@@ -18,6 +18,7 @@
 | | 05/03/24 | Fixing of motors and wires after damage caused when stored, causing setbacks to progress.  Added 2 rail breadboard to provide additional 5V and Ground pins which can be accessed easily.  Code fixed and ball pushing code implemented with original line following code to enable the complete course to be completed in 18 seconds.  Soldering of wires to bluetooth module and wiring completed. |
 | | 07/03/24 | Adjustment of motor speeds and adding speed restriction at end of course to allow more control for ball pushing section of course.  Autonomous mode is now complete. |
 | | 08/03/24 | Wiring of Robot was tampered with and motors were removed and driving shafts broken.  Spent time identifing wiring issues. |
+| | 11/03/24 | New motors fitted and testing of code implementation with Jude. |
 
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
 
