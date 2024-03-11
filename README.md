@@ -15,7 +15,9 @@
 | | 22/02/24 | Robot now completes the cornering section of the course.|
 | | 27/02/24 | Adjustment of motor speeds to complete course faster.  Wiring and coding of encoder to allow motor speed to be monitored.|
 | | 29/02/24 | IR Sensors fitted with screws and 2 additional sensors added.  Interrupt code added to enable outside sensors to enable the last used code to run when the line is overshot, allowing faster speeds to be achieved within course.|
-
+| | 05/03/24 | Fixing of motors and wires after damage caused when stored, causing setbacks to progress.  Added 2 rail breadboard to provide additional 5V and Ground pins which can be accessed easily.  Code fixed and ball pushing code implemented with original line following code to enable the complete course to be completed in 18 seconds.  Soldering of wires to bluetooth module and wiring completed. |
+| | 07/03/24 | Adjustment of motor speeds and adding speed restriction at end of course to allow more control for ball pushing section of course.  Autonomous mode is now complete. |
+| | 08/03/24 | Wiring of Robot was tampered with and motors were removed and driving shafts broken.  Spent time identifing wiring issues. |
 
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
 
