@@ -53,6 +53,7 @@
 | ![](img/conrad.jpg) | 16/01/24 | Met with team; |
 | | 23/01/24 | Worked on the proportional control algorithm code using Arduino. |
 | | 30/01/24 | Made a start on the code that will be used to implement the Infrared Sensors to help with the line tracking. |
+| | 13/02/24 | This was a reading week so I was preoccupied with other work. |
 
 # To-Do
 
