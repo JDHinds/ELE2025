@@ -21,6 +21,7 @@ volatile unsigned long ACount2 = 0;
 volatile unsigned long BCount2 = 0;
 
 int mode = 0;
+int telemode = 0;
 
 bool tr = false;
 bool tl = false;
@@ -45,7 +46,7 @@ TelemetryData data;
 void setup() 
 {
   Serial.begin(115200);
-  Serial.setTimeout(1000);
+  Serial.setTimeout(500);
   attachInterrupt(digitalPinToInterrupt(rightSesnor2), tright, RISING);
   attachInterrupt(digitalPinToInterrupt(leftSesnor2), tleft, RISING);
   pinMode (M1A, OUTPUT);
@@ -70,15 +71,13 @@ void loop()
   if(mode == 1)
   {
     lineFollowing();
-    sendTelemetry();
-    delay(50);
+    Serial.print(String(telemode));
   }
 
   else if(mode == 2)
   {
     ballPushing();
-    sendTelemetry();
-    delay(50);
+    Serial.print(String(telemode));
   }    
   else
   {
@@ -114,7 +113,7 @@ void lineFollowing()
       int motor1Speed = 0;
       int motor2Speed = 0;
       
-      if(ACount1 < 13800)
+      if(ACount1 < 15000)
       {
          motor1Speed = 220;
          motor2Speed = 220;
@@ -125,6 +124,8 @@ void lineFollowing()
          data.isLeftSensorDark = false;
          data.isRightSensorDark = false;
          data.distanceTravelled = ACount2;
+
+         telemode = 0;
       }
 
       else
@@ -138,6 +139,8 @@ void lineFollowing()
          data.isLeftSensorDark = false;
          data.isRightSensorDark = false;
          data.distanceTravelled = ACount2;
+
+        telemode = 1;
       }
       
       
@@ -170,6 +173,8 @@ void lineFollowing()
       data.isLeftSensorDark = true;
       data.isRightSensorDark = false;
       data.distanceTravelled = ACount2;
+
+      telemode = 2;
     }
   
     else if((leftSensor1Value == HIGH && rightSensor1Value == LOW)||(tr == true))
@@ -191,13 +196,15 @@ void lineFollowing()
       data.isLeftSensorDark = false;
       data.isRightSensorDark = true;
       data.distanceTravelled = ACount2;
+
+      telemode = 3;
    }  
 }
 
 void ballPushing()
 {
     
-  if(ACount1 < 1700)
+  if(ACount1 < 1900)
   {
       int motor1Speed = 70;
       int motor2Speed = 70;
@@ -214,6 +221,8 @@ void ballPushing()
       data.isLeftSensorDark = false;
       data.isRightSensorDark = false;
       data.distanceTravelled = ACount2;
+
+      telemode = 4;
   }
 
   else if(ACount1 < 3000)
@@ -233,6 +242,8 @@ void ballPushing()
       data.isLeftSensorDark = false;
       data.isRightSensorDark = false;
       data.distanceTravelled = ACount2;
+
+      telemode = 5;
   }
 
   else
@@ -249,6 +260,8 @@ void ballPushing()
       data.isLeftSensorDark = false;
       data.isRightSensorDark = false;
       data.distanceTravelled = ACount2;
+
+      telemode = 6;
   }
 }
 
@@ -261,6 +274,19 @@ void serialiseData(TelemetryData data)
   doc["isLeftSensorDark"] = data.isLeftSensorDark;
   doc["isRightSensorDark"] = data.isRightSensorDark;
   doc["distanceTravelled"] = data.distanceTravelled;
+
+  serializeJson(doc, JsonOutput);
+}
+
+void serialiseShortData(TelemetryData data)
+{
+  JsonDocument doc;
+  doc["c"] = true;
+  doc["LW"] = data.leftWheelSpeed;
+  doc["RWS"] = data.rightWheelSpeed;
+  doc["LS"] = data.isLeftSensorDark;
+  doc["RS"] = data.isRightSensorDark;
+  doc["d"] = data.distanceTravelled;
 
   serializeJson(doc, JsonOutput);
 }
@@ -278,16 +304,13 @@ void deserialiseData(String input)
   data.distanceTravelled = doc["distanceTravelled"];
 }
 
-void sendTelemetry()
+/*void sendTelemetry()
 {
-  serialiseData(data);
+  serialiseShortData(data);
   String output = String(JsonOutput);
-  Serial.print(output.substring(0,64));
-  delay(25);
-  Serial.print(output.substring(64,128));
-  delay(25);
-  Serial.println(output.substring(128,192));
-}
+  for (int i = 0; i < output.length(); i += 8)
+  { Serial.print(output.substring(i,i+8)); delay(10);}
+}*/
 
 void recieveInstructions()
 {
@@ -297,7 +320,7 @@ void recieveInstructions()
   if (instructions == "{manual}")
   { }
   else if (instructions == "{auto}")
-  { mode = 1; }
+  { mode = 1; ACount1 = 0;}
   else
   {
     deserialiseData(instructions);

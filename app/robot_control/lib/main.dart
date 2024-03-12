@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SerialPort port = SerialPort(SerialPort.availablePorts[1]);
+  SerialPort port = SerialPort(SerialPort.availablePorts[0]);
   late SerialPortReader reader;
 
   TelemetryData currentState = TelemetryData();
@@ -74,12 +74,12 @@ class _MyHomePageState extends State<MyHomePage> {
             currentState.rightWheelSpeed = 255;
           } else if (event.logicalKey == LogicalKeyboardKey.keyA &&
               (event is KeyDownEvent || event is KeyRepeatEvent)) {
-            currentState.leftWheelSpeed = -255;
-            currentState.rightWheelSpeed = 255;
+            currentState.leftWheelSpeed = -124;
+            currentState.rightWheelSpeed = 124;
           } else if (event.logicalKey == LogicalKeyboardKey.keyD &&
               (event is KeyDownEvent || event is KeyRepeatEvent)) {
-            currentState.leftWheelSpeed = 255;
-            currentState.rightWheelSpeed = -255;
+            currentState.leftWheelSpeed = 124;
+            currentState.rightWheelSpeed = -124;
           } else if (event.logicalKey == LogicalKeyboardKey.keyS &&
               (event is KeyDownEvent || event is KeyRepeatEvent)) {
             currentState.leftWheelSpeed = -255;
@@ -129,15 +129,54 @@ class _MyHomePageState extends State<MyHomePage> {
           if (AutoMode) {
             var decodedString = String.fromCharCodes(snapshot.data!);
             try {
-              if (decodedString[decodedString.length - 3] == '}') {
-                data += decodedString;
-                currentState = TelemetryData.fromJson(
+              /*if (decodedString.contains('}')) {
+                data += decodedString.substring(0, decodedString.indexOf('}'));
+                currentState = TelemetryData.fromShortJson(
                     json.decode(data.toString().substring(0, data.length - 2)));
                 print(data);
               } else if (decodedString[0] == '{') {
                 data = decodedString;
               } else {
                 data += decodedString;
+              }*/
+
+              print(decodedString);
+
+              if (decodedString[0] == '0') {
+                currentState.leftWheelSpeed = 220;
+                currentState.rightWheelSpeed = 220;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = false;
+              } else if (decodedString[0] == '1') {
+                currentState.leftWheelSpeed = 90;
+                currentState.rightWheelSpeed = 90;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = false;
+              } else if (decodedString[0] == '2') {
+                currentState.leftWheelSpeed = -70;
+                currentState.rightWheelSpeed = 60;
+                currentState.isLeftSensorDark = true;
+                currentState.isRightSensorDark = false;
+              } else if (decodedString[0] == '3') {
+                currentState.leftWheelSpeed = 60;
+                currentState.rightWheelSpeed = -70;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = true;
+              } else if (decodedString[0] == '4') {
+                currentState.leftWheelSpeed = 70;
+                currentState.rightWheelSpeed = 70;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = false;
+              } else if (decodedString[0] == '5') {
+                currentState.leftWheelSpeed = 100;
+                currentState.rightWheelSpeed = 100;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = false;
+              } else {
+                currentState.leftWheelSpeed = 0;
+                currentState.rightWheelSpeed = 0;
+                currentState.isLeftSensorDark = false;
+                currentState.isRightSensorDark = false;
               }
             } catch (ex) {
               print(ex);

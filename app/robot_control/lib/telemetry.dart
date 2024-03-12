@@ -22,6 +22,14 @@ class TelemetryData {
         isRightSensorDark = json['isRightSensorDark'] as bool? ?? false,
         distanceTravelled = json['distanceTravelled'] as int? ?? 0;
 
+  TelemetryData.fromShortJson(Map<String, dynamic> json)
+      : connected = json['c'] as bool? ?? false,
+        leftWheelSpeed = json['LW'] as int? ?? 0,
+        rightWheelSpeed = json['RW'] as int? ?? 0,
+        isLeftSensorDark = json['LS'] as bool? ?? false,
+        isRightSensorDark = json['RS'] as bool? ?? false,
+        distanceTravelled = json['d'] as int? ?? 0;
+
   static Map<String, dynamic> toJson(TelemetryData value) => {
         'connected': value.connected,
         'leftWheelSpeed': value.leftWheelSpeed,
