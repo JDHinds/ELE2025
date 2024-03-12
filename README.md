@@ -18,6 +18,7 @@
 | | 05/03/24 | Fixing of motors and wires after damage caused when stored, causing setbacks to progress.  Added 2 rail breadboard to provide additional 5V and Ground pins which can be accessed easily.  Code fixed and ball pushing code implemented with original line following code to enable the complete course to be completed in 18 seconds.  Soldering of wires to bluetooth module and wiring completed. |
 | | 07/03/24 | Adjustment of motor speeds and adding speed restriction at end of course to allow more control for ball pushing section of course.  Autonomous mode is now complete. |
 | | 08/03/24 | Wiring of Robot was tampered with and motors were removed and driving shafts broken.  Spent time identifing wiring issues. |
+| | 11/03/24 | New motors fitted and testing of code implementation with Jude. |
 
 ### [Jude Hinds](mailto:jhinds04@qub.ac.uk)
 
@@ -52,6 +53,11 @@
 | ![](img/conrad.jpg) | 16/01/24 | Met with team; |
 | | 23/01/24 | Worked on the proportional control algorithm code using Arduino. |
 | | 30/01/24 | Made a start on the code that will be used to implement the Infrared Sensors to help with the line tracking. |
+| | 13/02/24 | This was a reading week so I was preoccupied with other work. |
+| | 20/02/24 | Made a start on the presentation. Organised, using the github progress reports, what exactly we have added and contributed to the presentation and made a rough layout and a progress tracker to ensure it is finished with appropriate time. |
+| | 27/02/24 | Continued working on the presentation, updated slides based on the progress our group has made and included a slide that describes problems we have faced on the project and will explain during the presentation how we overcame these. |
+| | 05/03/24 | Worked with the group to improve our timing and to get it lower than the 18 seconds that we were achieving. Worked with the group to help improve the ball-pushing at the end of the track to ensure it was as accurate as possibe. Continued to work on the presentation to include pictures of the robot to aid in the understanding of what exactly was being explained in the presentation. Made the presentation more visually appealing and interesting to keep interest. |
+| | 12/03/24 | Met with group for final work-through of the robot before the demo. Updated the presentation to be in line with the updated version of the robot, with the addition of the new wedge. Continued to work on the presentation and enabled access to the group to enable the video recording of each member. |
 
 # To-Do
 
