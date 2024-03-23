@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  SerialPort port = SerialPort(SerialPort.availablePorts[0]);
+  SerialPort port = SerialPort(SerialPort.availablePorts[1]);
   late SerialPortReader reader;
 
   TelemetryData currentState = TelemetryData();
